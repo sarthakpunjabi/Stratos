@@ -1,1 +1,3 @@
-stratos/env1
+env1/
+stratos/loginsystem/__pycache__/
+stratos/db.sqlite
