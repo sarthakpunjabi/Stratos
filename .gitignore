@@ -1,3 +1,6 @@
 env1/
-stratos/loginsystem/__pycache__/
+stratos/loginsystem/__pycache__
+stratos/loginsystem/migrations
+stratos/questions/__pycache__
+stratos/questions/migrations
 stratos/db.sqlite
