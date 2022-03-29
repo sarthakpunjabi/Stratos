@@ -6,7 +6,7 @@ DIFF_CHOICES = (
     ('medium','medium'),
     ('hard','hard'),
 )
-# the main parent class for the factory pattern
+# Create your models here.
 class Quiz(models.Model):
     name = models.CharField(max_length=120)
     topic = models.CharField(max_length=120)
@@ -18,13 +18,11 @@ class Quiz(models.Model):
     class Meta:
         verbose_name_plural = 'Quizes'
 
-    @staticmethod
     def __str__(self):
         return f"{self.name}-{self.topic}"
 
-    @staticmethod
     def get_question(self):
-        que = list(self.question_set.all()) # this function takes in the input values for the questions and saves them as a list
+        que = list(self.question_set.all())
         print(que)
         random.shuffle(que)
         return que[:self.number_of_questions] 
