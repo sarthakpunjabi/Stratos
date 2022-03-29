@@ -6,3 +6,4 @@ stratos/questions/migrations/
 stratos/stratos/__pycache__/
 stratos/stratos/migrations/
 stratos/db.sqlite
+stratos/env1
