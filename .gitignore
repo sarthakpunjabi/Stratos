@@ -3,6 +3,6 @@ stratos/loginsystem/__pycache__
 stratos/loginsystem/migrations/
 stratos/questions/__pycache__
 stratos/questions/migrations/
-stratos/stratos/__pycache__
+stratos/stratos/__pycache__/
 stratos/stratos/migrations/
 stratos/db.sqlite
