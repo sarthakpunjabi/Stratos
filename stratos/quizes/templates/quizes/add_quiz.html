@@ -2,7 +2,9 @@
 {% load static %}
 
 {% block scripts %}
-<script src="{% static 'quizes/add_quiz.js' %}" defer></script>
+<script src="{% static 'quizes/add_quiz.js' %}" defer>
+    var quizObj = new Quiz();
+</script>
 {% endblock scripts %}
 
 {% block title %}
@@ -20,7 +22,7 @@ add_quiz
     <select name="difficulty" id="difficult" class="form-control">
         <option value="easy">Easy</option>
         <option value="medium">Medium</option>
-        <option value="hard">Difficult</option>
+        <option value="difficult">Difficult</option>
     </select>
     <label for="choices" class="form-label">Choices</label>
     <div class="dropdown" class="form-select ">
@@ -35,6 +37,10 @@ add_quiz
         style="margin-top: 30px; width: 100%;">
 </form>
 <div id="que-ans"></div>
+
+
+<button type="button" class="btn form-label btn-primary mt-3 goibibo not-visible" id="undoBtn"
+    onclick="quizObj.Undo()">Undo</button>
 
 <form id="quiz-form" action="" class="mt-3 mb-3" class="not-visible">
     {% csrf_token %}
@@ -65,7 +71,7 @@ add_quiz
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form method="post" id="modal-form">
+                    <form method="post" id="modal-form question">
                         <label for="addquestion">Add Question</label>
                         <input type="text" id="addquestion">
                         <br><br>
@@ -80,11 +86,16 @@ add_quiz
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="save-modal-form" data-bs-dismiss="modal">Save changes</button>
+                    <button type="button" class="btn btn-primary" id="save-modal-form" data-bs-dismiss="modal">Save
+                        changes</button>
                 </div>
             </div>
         </div>
     </div>
+
+    <input type="submit" style="display: hidden;" value="save" class="btn form-label btn-primary mt-3 goibibo not-visible" id="savebtn"
+        onclick="quizObj.save()"></input>
+
     <div id="quiz-box"></div>
     <button type="button" class="btn btn-warning not-visible" id="modbtn" data-bs-toggle="modal"
         data-bs-target="#exampleModal" style="width: 100%;">
