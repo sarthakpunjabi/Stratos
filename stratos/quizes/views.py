@@ -1,10 +1,13 @@
+from abc import ABCMeta, abstractmethod
+from typing import List
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from .models import Quiz
 from django.views.generic import ListView
-from django.http import JsonResponse
+from django.http import JsonResponse,HttpResponse
 from questions.models import Answer, Question
 from results.models import Result
+from django.shortcuts import redirect
 import requests
 import html
 
@@ -26,16 +29,18 @@ temp_categories = ["General Knowledge",
 for index,value in enumerate(temp_categories):
     default_categories[index+9]=value
 
-
-class QuizListView(ListView):
+class IGetQuestionsJSON(metaclass=ABCMeta):
+    @staticmethod
+    @abstractmethod
+    def RenderJSON():
+        """Abstract interface"""
+#Adaptee
+class GetQuestionsJSON(ListView, IGetQuestionsJSON):
     model = Quiz
     template_name = 'quizes/main.html'
 
-
-def add_quiz(request):
-    if request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
+    def RenderJSON(request):    
         temp = request.POST
-        print(temp['difficulty'])
         parameters = {
             "amount":int(temp['amount']),
             "category":int(temp['choice']),
@@ -46,8 +51,33 @@ def add_quiz(request):
         return JsonResponse({
             'data':data,
         })
-    else:    
-        return render(request,"quizes/add_quiz.html",context={"choices":default_categories})
+
+class IGetQuestionsHTML(metaclass=ABCMeta):
+    @staticmethod
+    @abstractmethod
+    def RenderHTML():
+        """Abstract interface"""
+#Target
+class GetQuestionsHTML(ListView, IGetQuestionsHTML):
+    def RenderHTML(request):
+         return render(request,"quizes/add_quiz.html",context={"choices":default_categories})
+#Adapter
+#Makes JSON's iterface compatible with HTML's interface
+class JSONToHTML(GetQuestionsJSON):
+    def __init__(self):
+        self.GetQuestionsJSON = GetQuestionsJSON()
+    
+    def RenderHTML(self):
+        self.GetQuestionsJSON.RenderJSON()
+
+class QuizListView(ListView):
+    def add_quiz(request):
+        if request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
+            ITEM = JSONToHTML()
+        else:
+            JSONObj = GetQuestionsJSON()
+            ITEM = GetQuestionsHTML(JSONObj)
+        ITEM.RenderHTML()
 
 @login_required
 def add_save(request):
@@ -120,7 +150,7 @@ def save_quiz_view(request,pk):
         print(data_)
 
         for k in data_.keys():
-            question = Question.objects.filter(text=html.unescape(k))[0]
+            question = Question.objects.get(text=k)
             print(question)
             questions.append(question)
 
