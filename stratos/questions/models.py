@@ -8,9 +8,11 @@ class Question(models.Model):
     quiz = models.ForeignKey(Quiz,on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
 
+    @staticmethod
     def __str__(self):
         return str(self.text)
 
+    @staticmethod
     def get_answer(self):
         return self.answer_set.all()
 
@@ -20,7 +22,7 @@ class Answer(models.Model):
     question = models.ForeignKey(Question,on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     
-
+    @staticmethod
     def __str__(self):
         return f"question: {self.question.text}, answer:{self.text} correct:{self.correct}"
 
