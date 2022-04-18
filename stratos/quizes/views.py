@@ -1,5 +1,3 @@
-from abc import ABCMeta, abstractmethod
-from typing import List
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from .models import Quiz
@@ -29,17 +27,14 @@ temp_categories = ["General Knowledge",
 for index,value in enumerate(temp_categories):
     default_categories[index+9]=value
 
-class IGetQuestionsJSON(metaclass=ABCMeta):
-    @staticmethod
-    @abstractmethod
-    def RenderJSON():
-        """Abstract interface"""
-#Adaptee
-class GetQuestionsJSON(ListView, IGetQuestionsJSON):
+
+class QuizListView(ListView):
     model = Quiz
     template_name = 'quizes/main.html'
 
-    def RenderJSON(request):    
+
+def add_quiz(request):
+    if request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
         temp = request.POST
         parameters = {
             "amount":int(temp['amount']),
@@ -51,33 +46,8 @@ class GetQuestionsJSON(ListView, IGetQuestionsJSON):
         return JsonResponse({
             'data':data,
         })
-
-class IGetQuestionsHTML(metaclass=ABCMeta):
-    @staticmethod
-    @abstractmethod
-    def RenderHTML():
-        """Abstract interface"""
-#Target
-class GetQuestionsHTML(ListView, IGetQuestionsHTML):
-    def RenderHTML(request):
-         return render(request,"quizes/add_quiz.html",context={"choices":default_categories})
-#Adapter
-#Makes JSON's iterface compatible with HTML's interface
-class JSONToHTML(GetQuestionsJSON):
-    def __init__(self):
-        self.GetQuestionsJSON = GetQuestionsJSON()
-    
-    def RenderHTML(self):
-        self.GetQuestionsJSON.RenderJSON()
-
-class QuizListView(ListView):
-    def add_quiz(request):
-        if request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
-            ITEM = JSONToHTML()
-        else:
-            JSONObj = GetQuestionsJSON()
-            ITEM = GetQuestionsHTML(JSONObj)
-        ITEM.RenderHTML()
+    else:    
+        return render(request,"quizes/add_quiz.html",context={"choices":default_categories})
 
 @login_required
 def add_save(request):
@@ -187,4 +157,3 @@ def save_quiz_view(request,pk):
             return JsonResponse({'passed':True,'score':score_,'results':results})
         else:
             return JsonResponse({'passed':False,'score':score_,'results':results})
-    
