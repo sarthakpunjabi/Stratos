@@ -55,6 +55,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'quizes.Interceptor.Logging',
 ]
 
 ROOT_URLCONF = 'quizapplication.urls'
@@ -161,5 +162,5 @@ STATIC_ROOT = BASE_DIR / 'assets'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
-
+LOG_LOCATION = BASE_DIR
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

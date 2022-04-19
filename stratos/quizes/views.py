@@ -34,6 +34,7 @@ class QuizListView(ListView):
 
 
 def add_quiz(request):
+    request.log.info("Adding the quiz")
     if request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
         temp = request.POST
         parameters = {
@@ -51,7 +52,7 @@ def add_quiz(request):
 
 @login_required
 def add_save(request):
-    
+    request.log.info("Saving the quiz")
     data = request.POST
     data_ = dict(data.lists())
     #creation of quiz
@@ -92,11 +93,13 @@ def add_save(request):
 
 @login_required
 def quiz_view(request,pk):
+    request.log.info("Getting the quiz")
     quiz = Quiz.objects.get(pk=pk)
     return render(request,'quizes/quiz.html',{'obj':quiz})
 
 @login_required
 def quiz_data_view(request,pk):
+    request.log.info("Storing the questions and answers")
     quiz = Quiz.objects.get(pk=pk)
     questions = []
     for q in quiz.get_question():
@@ -112,6 +115,7 @@ def quiz_data_view(request,pk):
 
 @login_required
 def save_quiz_view(request,pk):
+    request.log.info("Saving the quiz result")
     if request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
         questions = []
         data = request.POST
