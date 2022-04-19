@@ -1,10 +1,19 @@
+from abc import ABCMeta, abstractmethod
+from msilib.schema import ListView
+from django.http import JsonResponse
+
+from django.shortcuts import render
+
+from quizes.models import Quiz
+
+
 class IGetQuestionsJSON(metaclass=ABCMeta):
     @staticmethod
     @abstractmethod
     def RenderJSON():
         """Abstract interface"""
 #Adaptee
-class GetQuestionsJSON(ListView, IGetQuestionsJSON):
+class GetQuestionsJSONAdaptee(ListView, IGetQuestionsJSON):
     model = Quiz
     template_name = 'quizes/main.html'
 
@@ -27,14 +36,14 @@ class IGetQuestionsHTML(metaclass=ABCMeta):
     def RenderHTML():
         """Abstract interface"""
 #Target
-class GetQuestionsHTML(ListView, IGetQuestionsHTML):
+class GetQuestionsHTMLTarget(ListView, IGetQuestionsHTML):
     def RenderHTML(request):
          return render(request,"quizes/add_quiz.html",context={"choices":default_categories})
 #Adapter
 #Makes JSON's iterface compatible with HTML's interface
-class JSONToHTML(GetQuestionsJSON):
+class JSONToHTMLAdapter(GetQuestionsJSONAdaptee):
     def __init__(self):
-        self.GetQuestionsJSON = GetQuestionsJSON()
+        self.GetQuestionsJSON = GetQuestionsJSONAdaptee()
     
     def RenderHTML(self):
         self.GetQuestionsJSON.RenderJSON()
@@ -42,8 +51,8 @@ class JSONToHTML(GetQuestionsJSON):
 class QuizListView(ListView):
     def add_quiz(request):
         if request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
-            ITEM = JSONToHTML()
+            ITEM = JSONToHTMLAdapter()
         else:
-            JSONObj = GetQuestionsJSON()
-            ITEM = GetQuestionsHTML(JSONObj)
+            JSONObj = GetQuestionsJSONAdaptee()
+            ITEM = GetQuestionsHTMLTarget(JSONObj)
         ITEM.RenderHTML()
