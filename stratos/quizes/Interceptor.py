@@ -11,9 +11,13 @@ from django.conf import settings
 class Interceptor:
     def __init__(self) -> None:
         self.logger = None
-        
-    def get_logger(self):
-        pass
+
+    class Concrete_Interceptor:
+        def __init__(self) -> None:
+            pass
+            
+        def get_logger(self):
+            pass
 
 class Context_object():
     def __init__(self,get_response):
@@ -31,6 +35,7 @@ class Context_object():
 
     def process_exception(self,request, exception):
         pass
+    
 
 class Concrete_Interceptor(Interceptor,Context_object):
     """
