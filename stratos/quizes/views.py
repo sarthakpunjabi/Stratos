@@ -2,9 +2,10 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from .models import Quiz
 from django.views.generic import ListView
-from django.http import JsonResponse
+from django.http import JsonResponse,HttpResponse
 from questions.models import Answer, Question
 from results.models import Result
+from django.shortcuts import redirect
 import requests
 import html
 
@@ -35,7 +36,6 @@ class QuizListView(ListView):
 def add_quiz(request):
     if request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
         temp = request.POST
-        print(temp['difficulty'])
         parameters = {
             "amount":int(temp['amount']),
             "category":int(temp['choice']),
@@ -120,7 +120,7 @@ def save_quiz_view(request,pk):
         print(data_)
 
         for k in data_.keys():
-            question = Question.objects.filter(text=html.unescape(k))[0]
+            question = Question.objects.get(text=k)
             print(question)
             questions.append(question)
 
@@ -157,4 +157,3 @@ def save_quiz_view(request,pk):
             return JsonResponse({'passed':True,'score':score_,'results':results})
         else:
             return JsonResponse({'passed':False,'score':score_,'results':results})
-    
