@@ -1,14 +1,41 @@
 """This creates a singleton object of our application for Logging."""
+from abc import abstractmethod
 import logging
 from multiprocessing import get_logger
 import os
 import datetime
 from django.conf import settings
 
-class Logger:
+
+@abstractmethod
+class Interceptor:
+    def __init__(self) -> None:
+        self.logger = None
+        
+    def get_logger(self):
+        pass
+
+class Context_object():
+    def __init__(self,get_response):
+        self.get_response = get_response
+        
+
+    def __call__(self,request):
+        request.log = Concrete_Interceptor().get_logger()
+        response = self.get_response(request)
+        return response
+        
+
+    def process_view(self,request, view_func, view_args, view_kwargs):
+        pass
+
+    def process_exception(self,request, exception):
+        pass
+
+class Concrete_Interceptor(Interceptor,Context_object):
     """
-    This creates a logger instance of rentezzy application.
-    It is used for demonstrating singleton implementation.
+    This creates a logger instance of quiz application.
+    It is used for demonstrating interceptor implementation.
     """
     _logger = None
 
@@ -31,22 +58,19 @@ class Logger:
             )
             file_handler.setFormatter(formatter)
             self._logger.addHandler(file_handler)
+            
 
     def get_logger(self):
         """
-        Getter for returning the singleton object.
+        Getter for returning the interceptor object.
         """
         return self._logger
 
+    
 
-class Logging(Logger):
-    def __init__(self,get_response):
-        self.get_response = get_response
 
-    def __call__(self,request):
-        request.log = Logger().get_logger()
-        response = self.get_response(request)
-        
-        return response
+
+
+    
 
     

@@ -47,7 +47,9 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
 ]
 
-MIDDLEWARE = [
+
+
+MIDDLEWARE = DISPATCHER = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -55,7 +57,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'quizes.Interceptor.Logging',
+    'quizes.Interceptor.Context_object',
 ]
 
 ROOT_URLCONF = 'quizapplication.urls'
