@@ -1,7 +1,7 @@
 '''Registering the Roles with admin'''
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from .models import NewUser
+from .models import Implementor
 
 
 class UserAdmin(BaseUserAdmin):
@@ -32,4 +32,4 @@ class UserAdmin(BaseUserAdmin):
     ordering = ('email',)
     filter_horizontal = ('groups', 'user_permissions',)
 
-admin.site.register(NewUser, UserAdmin)
+admin.site.register(Implementor, UserAdmin)

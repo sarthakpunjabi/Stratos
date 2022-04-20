@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
-    'loginsystem',
+    'Loginsystem',
     'questions',
     'results',
     'quizes',
@@ -129,7 +129,7 @@ USE_I18N = True
 
 USE_TZ = True
 
-
+AUTH_USER_MODEL = 'Loginsystem.Implementor'
 
 SITE_ID = 1
 
