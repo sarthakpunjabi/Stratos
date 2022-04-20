@@ -23,7 +23,7 @@ AGENT_LEVEL = (
 
 
 # Create your models here.
-class CustomAccountManager(BaseUserManager):
+class AbstractClass(BaseUserManager):
     '''Custom Account manager for managing roles'''
     ordering = ('email',)
 
@@ -56,15 +56,15 @@ class Subscription(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
 
-class NewUser(AbstractBaseUser, PermissionsMixin):
+class Implementor(AbstractBaseUser, PermissionsMixin):
     '''Adding custom user models and permission'''
     class Types(models.TextChoices):
         '''Creating Proxy types and giving choices'''
-        CUSTOMER = "CUSTOMER", "Customer"
-        AGENT = "AGENT", "Agent"
+        STUDENT = "CUSTOMER", "Customer"
+        TEACHER = "AGENT", "Agent"
         OWNER = "OWNER", "Owner"
 
-    type = models.CharField(_('Type'), max_length=50, choices=Types.choices, default=Types.CUSTOMER)
+    type = models.CharField(_('Type'), max_length=50, choices=Types.choices, default=Types.STUDENT)
 
     user_name = models.CharField(max_length=150,unique=False)
     email = models.EmailField(_('email address'), unique=True)
@@ -81,7 +81,7 @@ class NewUser(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     level = models.CharField(max_length=20, choices=AGENT_LEVEL, default="GOLD")
     # booking_history is not needed, as we can get this details by querying room details
-    objects = CustomAccountManager()
+    objects = AbstractClass()
     USERNAME_FIELD = "email"
     EMAIL_FIELD = "email"
     REQUIRED_FIELDS = ["first_name", "last_name"]
@@ -95,65 +95,65 @@ class NewUser(AbstractBaseUser, PermissionsMixin):
         return "/users/%i/" % (self.pk)
 
 
-class CustomerManager(models.Manager):
+class ConcreteImplementor1(models.Manager):
     '''this is the manager for customer type role'''
     def get_queryset(self, *args, **kwargs):
         '''Returning querysets of proxy model customer'''
-        return super().get_queryset(*args, **kwargs).filter(type=NewUser.Types.CUSTOMER)
+        return super().get_queryset(*args, **kwargs).filter(type=Implementor.Types.STUDENT)
 
     def save(self, *args, **kwargs):
         '''Overriding the save function '''
         if not self.pk:
-            self.type = NewUser.Types.CUSTOMER
+            self.type = Implementor.Types.STUDENT
         return super().save(*args, **kwargs)
 
 
-class OwnerManager(models.Manager):
+class ConcreteImplementor2(models.Manager):
     '''this is the manager for owner type role'''
     def get_queryset(self, *args, **kwargs):
         '''Returning querysets of proxy model Owner'''
-        return super().get_queryset(*args, **kwargs).filter(type=NewUser.Types.OWNER)
+        return super().get_queryset(*args, **kwargs).filter(type=Implementor.Types.TEACHER)
 
     def save(self, *args, **kwargs):
         '''Overriding the save function '''
         if not self.pk:
-            self.type = NewUser.Types.OWNER
+            self.type = Implementor.Types.TEACHER
         return super().save(*args, **kwargs)
 
 
-class AgentManager(models.Manager):
+class ConcreteImplementor3(models.Manager):
     '''this is the manager for agent type role'''
     def get_queryset(self, *args, **kwargs):
         '''Returning querysets of proxy model agent'''
-        return super().get_queryset(*args, **kwargs).filter(type=NewUser.Types.AGENT)
+        return super().get_queryset(*args, **kwargs).filter(type=Implementor.Types.AGENT)
 
     def save(self, *args, **kwargs):
         '''Overriding the save function '''
         if not self.pk:
-            self.type = NewUser.Types.AGENT
+            self.type = Implementor.Types.AGENT
         return super().save(*args, **kwargs)
 
 
-class Customer(NewUser):
+class Customer(Implementor):
     '''this is proxy model for customer for fast and async models'''
-    objects = CustomAccountManager()
+    objects = ConcreteImplementor1()
 
     class Meta:
         '''obligating meta as true'''
         proxy = True
 
 
-class Owner(NewUser):
+class Owner(Implementor):
     '''this is proxy model for Owner for fast and async models'''
-    objects = OwnerManager()
+    objects = ConcreteImplementor2()
 
     class Meta:
         '''obligating meta as true'''
         proxy = True
 
-class Agent(NewUser):
+class Agent(Implementor):
     '''this is proxy model for Agemt for fast and async models'''
-    objects = AgentManager()
+    objects = ConcreteImplementor3()
 
     class Meta:
         '''obligating meta as true'''
