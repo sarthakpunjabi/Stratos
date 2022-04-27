@@ -20,7 +20,7 @@ class Add(Memento):
             return access
         
         except:
-            super.state_history.add("")
+            # super.state_history.add("")
             Q,create = Quiz.objects.get_or_create(
                 name=f"{self.data_.get('meta[nameofquiz]')[0]}",
                 topic = f"{self.data_.get('meta[topic]')[0]}",

@@ -8,6 +8,7 @@ from questions.models import Answer, Question
 from results.models import Result
 from django.shortcuts import redirect
 from .memento import Add
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
 import requests
 
 
@@ -66,9 +67,18 @@ def add_save(request):
     obj.adding_quiz()
     
     return JsonResponse({"Objective":"Achieved"})
-    
+
+
+@login_required
 def remove_save(request):
     request.log.info("Removing the quiz")
+    print("Entered the remove state")
+    if request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
+        data = request.POST
+        data_ = dict(data.lists())
+        data_.pop('csrfmiddlewaretoken')
+        Quiz.objects.filter(id=data_['pk'][0]).delete()
+    return JsonResponse({"Objective":"Achieved and Removed "})
 
 
 @login_required
