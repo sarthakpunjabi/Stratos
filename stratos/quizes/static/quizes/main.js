@@ -3,10 +3,16 @@ console.log("hello world")
 const modalBtns = [...document.getElementsByClassName('modal-button')]
 console.log(modalBtns)
 const modalBody = document.getElementById('modal-body-confirm')
-
+const removeBtn = document.getElementsByClassName('remove-button')
 const startBtn = document.getElementById('start-button')
 
 const url = window.location.href
+
+
+removeBtn.addEventListener('click',e=>{
+    
+
+})
 
 
 modalBtns.forEach(modalBtn => modalBtn.addEventListener('click',()=>{
