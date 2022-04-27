@@ -11,9 +11,6 @@ from .memento import Memento,Originator,Caretaker
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 import requests
 
-
-
-
 # Create your views here.
 
 default_categories = {}

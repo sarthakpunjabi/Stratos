@@ -28,7 +28,6 @@ class Context_object():
     def __call__(self,request):
         request.log = Concrete_Interceptor().get_logger()
         response = self.get_response(request)
-        # print(response)
         return response
         
 
