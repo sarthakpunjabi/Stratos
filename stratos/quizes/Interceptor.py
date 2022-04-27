@@ -1,5 +1,5 @@
 """This creates a singleton object of our application for Logging."""
-from abc import abstractmethod
+from abc import abstractclassmethod, abstractmethod
 import logging
 from multiprocessing import get_logger
 import os
@@ -7,7 +7,6 @@ import datetime
 from django.conf import settings
 
 
-@abstractmethod
 class Interceptor:
     def __init__(self) -> None:
         self.logger = None
@@ -15,18 +14,21 @@ class Interceptor:
     class Concrete_Interceptor:
         def __init__(self) -> None:
             pass
-            
+        
+        @abstractmethod
         def get_logger(self):
             pass
 
 class Context_object():
     def __init__(self,get_response):
         self.get_response = get_response
+        self.command = []
         
 
     def __call__(self,request):
         request.log = Concrete_Interceptor().get_logger()
         response = self.get_response(request)
+        # print(response)
         return response
         
 
@@ -35,6 +37,11 @@ class Context_object():
 
     def process_exception(self,request, exception):
         pass
+
+    def process_execution(self,request,response):
+        pass
+
+    
     
 
 class Concrete_Interceptor(Interceptor,Context_object):

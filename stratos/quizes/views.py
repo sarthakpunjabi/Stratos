@@ -1,3 +1,4 @@
+from urllib import response
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from .models import Quiz
@@ -8,6 +9,8 @@ from results.models import Result
 from django.shortcuts import redirect
 import requests
 import html
+
+
 
 # Create your views here.
 
@@ -31,6 +34,7 @@ for index,value in enumerate(temp_categories):
 class QuizListView(ListView):
     model = Quiz
     template_name = 'quizes/main.html'
+    
 
 
 def add_quiz(request):
@@ -44,6 +48,7 @@ def add_quiz(request):
             "type":temp['type']
         }
         data = requests.get("https://opentdb.com/api.php",params=parameters).json()["results"]
+        
         return JsonResponse({
             'data':data,
         })
