@@ -66,7 +66,7 @@ class Implementor(AbstractBaseUser, PermissionsMixin):
 
     type = models.CharField(_('Type'), max_length=50, choices=Types.choices, default=Types.STUDENT)
 
-    user_name = models.CharField(max_length=150,unique=False)
+    username = models.CharField(max_length=150,unique=False)
     email = models.EmailField(_('email address'), unique=True)
     first_name = models.CharField(max_length=150)
     middle_name = models.CharField(max_length=200)

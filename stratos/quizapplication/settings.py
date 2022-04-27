@@ -130,6 +130,7 @@ USE_I18N = True
 USE_TZ = True
 
 AUTH_USER_MODEL = 'Loginsystem.Implementor'
+ACCOUNT_EMAIL_VERIFICATION = "none"
 
 SITE_ID = 1
 
