@@ -7,8 +7,10 @@ from django.http import JsonResponse,HttpResponse
 from questions.models import Answer, Question
 from results.models import Result
 from django.shortcuts import redirect
+from .memento import Memento,Originator,Caretaker
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
 import requests
-import html
+
 
 
 
@@ -60,41 +62,24 @@ def add_save(request):
     request.log.info("Saving the quiz")
     data = request.POST
     data_ = dict(data.lists())
-    #creation of quiz
-    try:
-        access = Quiz.objects.get(name=f"{data_.get('meta[nameofquiz]')[0]}")
-        
-    except:
-        Q,create = Quiz.objects.get_or_create(
-            name=f"{data_.get('meta[nameofquiz]')[0]}",
-            topic = f"{data_.get('meta[topic]')[0]}",
-            number_of_questions = f"{data_.get('meta[numberofquestion]')[0]}",
-            time = f"{data_.get('meta[time]')[0]}",
-            required_score_to_pass = f"{data_.get('meta[reqscoretopass]')[0]}",
-            difficulty = f"{data_.get('meta[difficulty]')[0]}",
-        )
-        if create:
-            
-            for i in range(int(Q.number_of_questions)):
-                print(html.unescape(f"{data_.get(f'data[{i}][question]')[0]}"))
-                que = Question.objects.get_or_create(
-                    text = html.unescape(f"{data_.get(f'data[{i}][question]')[0]}"),
-                    quiz_id = Q.id
-                )
-                print(html.unescape(f"{data_.get(f'data[{i}][correct_answer]')[0]}"))
-                ans = Answer.objects.get_or_create(
-                    text = html.unescape(f"{data_.get(f'data[{i}][correct_answer]')[0]}"),
-                    correct = True,
-                    question_id = que[0].id
-                )
-                ans1 = Answer.objects.get_or_create(text = html.unescape(f"{data_.get(f'data[{i}][incorrect_answers][]')[0]}"),correct=False,question_id=f"{que[0].id}"),
-                ans2 = Answer.objects.get_or_create(text = html.unescape(f"{data_.get(f'data[{i}][incorrect_answers][]')[1]}"),correct=False,question_id=f"{que[0].id}"),
-                ans3 = Answer.objects.get_or_create(text = html.unescape(f"{data_.get(f'data[{i}][incorrect_answers][]')[2]}"),correct=False,question_id=f"{que[0].id}"),
-                
-
+    obj = Originator(data_)
+    obj.adding_quiz()
     
     return JsonResponse({"Objective":"Achieved"})
-    
+
+
+@login_required
+def remove_save(request):
+    request.log.info("Removing the quiz")
+    print("Entered the remove state")
+    if request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
+        data = request.POST
+        obj2 = Caretaker()
+        obj = Memento(data)
+        obj.rem()
+        
+    return JsonResponse({"Objective":"Achieved and Removed "})
+
 
 @login_required
 def quiz_view(request,pk):
