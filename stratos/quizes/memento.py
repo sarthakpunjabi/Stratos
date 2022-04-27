@@ -10,7 +10,7 @@ class Memento:
 
 
 
-class Add:
+class Add(Memento):
     def __init__(self,data_):
         self.data_ = data_
 
@@ -20,6 +20,7 @@ class Add:
             return access
         
         except:
+            super.state_history.add("")
             Q,create = Quiz.objects.get_or_create(
                 name=f"{self.data_.get('meta[nameofquiz]')[0]}",
                 topic = f"{self.data_.get('meta[topic]')[0]}",
@@ -47,5 +48,5 @@ class Add:
 
 
 class Remove:
-    def __init__(self) -> None:
+    def __init__(self):
         pass
