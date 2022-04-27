@@ -1,5 +1,5 @@
 """This creates a singleton object of our application for Logging."""
-from abc import abstractclassmethod, abstractmethod
+from abc import abstractmethod
 import logging
 from multiprocessing import get_logger
 import os
