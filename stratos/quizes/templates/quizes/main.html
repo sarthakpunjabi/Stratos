@@ -63,6 +63,7 @@ home
 
 {% if user.is_superuser %}
 <a href="{% url 'quizes:add-quiz' %}" class="btn btn-primary">Add quiz</a>
+<a href="" class="btn btn-primary">Undo</a>
 {% endif %}
 
 {% endblock content %}

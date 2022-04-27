@@ -77,12 +77,3 @@ class Concrete_Interceptor(Interceptor,Context_object):
         Getter for returning the interceptor object.
         """
         return self._logger
-
-    
-
-
-
-
-    
-
-    

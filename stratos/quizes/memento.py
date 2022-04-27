@@ -3,15 +3,22 @@ from .models import Quiz
 from questions.models import Answer, Question
 
 
-class Memento:
+class Caretaker:
     def __init__(self):
         self.state_history = []
+        self.restore = self
+
+    def setState(self,obj):
+        self.state_history.append(obj)
+
+    def undo(self , obj ):
+        self.state_history.pop()
+        self.restore = obj
 
 
-
-
-class Add(Memento):
-    def __init__(self,data_):
+class Originator(Caretaker):
+    def __init__(self,data_,*args):
+        super().__init__(*args)
         self.data_ = data_
 
     def adding_quiz(self):
@@ -20,7 +27,7 @@ class Add(Memento):
             return access
         
         except:
-            # super.state_history.add("")
+            
             Q,create = Quiz.objects.get_or_create(
                 name=f"{self.data_.get('meta[nameofquiz]')[0]}",
                 topic = f"{self.data_.get('meta[topic]')[0]}",
@@ -45,8 +52,16 @@ class Add(Memento):
                     ans1 = Answer.objects.get_or_create(text = html.unescape(f"{self.data_.get(f'data[{i}][incorrect_answers][]')[0]}"),correct=False,question_id=f"{que[0].id}"),
                     ans2 = Answer.objects.get_or_create(text = html.unescape(f"{self.data_.get(f'data[{i}][incorrect_answers][]')[1]}"),correct=False,question_id=f"{que[0].id}"),
                     ans3 = Answer.objects.get_or_create(text = html.unescape(f"{self.data_.get(f'data[{i}][incorrect_answers][]')[2]}"),correct=False,question_id=f"{que[0].id}"),
+        
 
 
-class Remove:
-    def __init__(self):
-        pass
+class Memento(Caretaker):
+    def __init__(self,data):
+        self.data = data
+
+    def rem(self):
+        print("Entered into remove state")
+        data_ = dict(self.data.lists())
+        data_.pop('csrfmiddlewaretoken')
+        Quiz.objects.filter(id=data_['pk'][0]).delete()
+        

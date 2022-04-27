@@ -7,7 +7,7 @@ from django.http import JsonResponse,HttpResponse
 from questions.models import Answer, Question
 from results.models import Result
 from django.shortcuts import redirect
-from .memento import Add
+from .memento import Memento,Originator,Caretaker
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 import requests
 
@@ -62,8 +62,7 @@ def add_save(request):
     request.log.info("Saving the quiz")
     data = request.POST
     data_ = dict(data.lists())
-    #creation of quiz
-    obj = Add(data_)
+    obj = Originator(data_)
     obj.adding_quiz()
     
     return JsonResponse({"Objective":"Achieved"})
@@ -75,9 +74,10 @@ def remove_save(request):
     print("Entered the remove state")
     if request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
         data = request.POST
-        data_ = dict(data.lists())
-        data_.pop('csrfmiddlewaretoken')
-        Quiz.objects.filter(id=data_['pk'][0]).delete()
+        obj2 = Caretaker()
+        obj = Memento(data)
+        obj.rem()
+        
     return JsonResponse({"Objective":"Achieved and Removed "})
 
 
